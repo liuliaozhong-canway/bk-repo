@@ -72,10 +72,15 @@ object OciResponseUtils {
             host = parts[0]
         }
         // domain为ip,port组合
+        var port: Int? = null
         if (domain.split(":").size > 1) {
-            host = domain
+            host = domain.split(":")[0]
+            port = Integer.valueOf(domain.split(":")[1])
         }
         val builder = UriBuilder.fromPath(OCI_API_PREFIX).host(host).scheme(getProtocol(request, enableHttps))
+        port?.let {
+            builder.port(port)
+        }
         return builder.build()
     }
 
