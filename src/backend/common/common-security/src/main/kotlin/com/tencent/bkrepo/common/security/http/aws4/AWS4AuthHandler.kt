@@ -44,12 +44,16 @@ import com.tencent.bkrepo.common.security.http.credentials.AnonymousCredentials
 import com.tencent.bkrepo.common.security.http.credentials.HttpAuthCredentials
 import com.tencent.bkrepo.common.security.manager.AuthenticationManager
 import org.slf4j.LoggerFactory
+import org.springframework.beans.factory.annotation.Value
 import javax.servlet.http.HttpServletRequest
 
 /**
  * AWS4 Http 认证方式
  */
 open class AWS4AuthHandler(val authenticationManager: AuthenticationManager) : HttpAuthHandler {
+
+    @Value("\${spring.application.name}")
+    private var applicationName: String = "s3"
 
     override fun extractAuthCredentials(request: HttpServletRequest): HttpAuthCredentials {
         val authorizationHeader = request.getHeader(HttpHeaders.AUTHORIZATION).orEmpty()
@@ -102,13 +106,15 @@ open class AWS4AuthHandler(val authenticationManager: AuthenticationManager) : H
         accessKeyId: String,
         secretAccessKey: String
     ): AWS4AuthCredentials {
+        println(applicationName)
         return AWS4AuthCredentials(
             authorization = request.getHeader("Authorization"),
             accessKeyId = accessKeyId,
             secretAccessKey = secretAccessKey,
             requestDate = request.getHeader("x-amz-date"),
             contentHash = request.getHeader("x-amz-content-sha256"),
-            uri = "s3"+request.requestURI.split("?").toTypedArray()[0],
+            //uri = request.requestURI.split("?").toTypedArray()[0],
+            uri = "/$applicationName"+request.requestURI.split("?").toTypedArray()[0],
             host = request.getHeader("host"),
             queryString = request.queryString ?: "",
             method = request.method
