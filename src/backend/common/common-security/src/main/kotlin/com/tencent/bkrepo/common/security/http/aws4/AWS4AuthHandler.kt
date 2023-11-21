@@ -80,6 +80,9 @@ open class AWS4AuthHandler(val authenticationManager: AuthenticationManager) : H
     @Throws(AWS4AuthenticationException::class)
     override fun onAuthenticate(request: HttpServletRequest, authCredentials: HttpAuthCredentials): String {
         require(authCredentials is AWS4AuthCredentials)
+        logger.info("authCredentials信息："+authCredentials.toString())
+
+
         var flag = AWS4AuthUtil.validAuthorization(authCredentials)
         logger.info("s3请求，，，验证是否通过，flag="+flag);
 
@@ -105,7 +108,7 @@ open class AWS4AuthHandler(val authenticationManager: AuthenticationManager) : H
             secretAccessKey = secretAccessKey,
             requestDate = request.getHeader("x-amz-date"),
             contentHash = request.getHeader("x-amz-content-sha256"),
-            uri = request.requestURI.split("?").toTypedArray()[0],
+            uri = "s3"+request.requestURI.split("?").toTypedArray()[0],
             host = request.getHeader("host"),
             queryString = request.queryString ?: "",
             method = request.method
