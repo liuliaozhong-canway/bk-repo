@@ -43,6 +43,7 @@ import com.tencent.bkrepo.common.security.http.core.HttpAuthHandler
 import com.tencent.bkrepo.common.security.http.credentials.AnonymousCredentials
 import com.tencent.bkrepo.common.security.http.credentials.HttpAuthCredentials
 import com.tencent.bkrepo.common.security.manager.AuthenticationManager
+import org.slf4j.LoggerFactory
 import javax.servlet.http.HttpServletRequest
 
 /**
@@ -52,6 +53,7 @@ open class AWS4AuthHandler(val authenticationManager: AuthenticationManager) : H
 
     override fun extractAuthCredentials(request: HttpServletRequest): HttpAuthCredentials {
         val authorizationHeader = request.getHeader(HttpHeaders.AUTHORIZATION).orEmpty()
+        logger.info("s3请求，，，，authorizationHeader="+authorizationHeader);
         return if (authorizationHeader.startsWith(AWS4_AUTH_PREFIX)) {
             try {
                 /**
@@ -61,6 +63,7 @@ open class AWS4AuthHandler(val authenticationManager: AuthenticationManager) : H
                  */
                 var userName = AWS4AuthUtil.getAccessKey(authorizationHeader)
                 var password: String? = authenticationManager.findUserPwd(userName) ?: throw AWS4AuthenticationException()
+                logger.info("s3请求，，，user=$userName, pwd="+password);
                 buildAWS4AuthorizationInfo(request, userName, password!!)
             } catch (exception: Exception) {
                 // 认证异常处理
@@ -78,6 +81,8 @@ open class AWS4AuthHandler(val authenticationManager: AuthenticationManager) : H
     override fun onAuthenticate(request: HttpServletRequest, authCredentials: HttpAuthCredentials): String {
         require(authCredentials is AWS4AuthCredentials)
         var flag = AWS4AuthUtil.validAuthorization(authCredentials)
+        logger.info("s3请求，，，验证是否通过，flag="+flag);
+
         if (flag) {
             return authCredentials.accessKeyId
         }
@@ -107,4 +112,7 @@ open class AWS4AuthHandler(val authenticationManager: AuthenticationManager) : H
         )
     }
 
+    companion object {
+        private val logger = LoggerFactory.getLogger(AWS4AuthHandler::class.java)
+    }
 }
