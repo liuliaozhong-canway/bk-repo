@@ -63,6 +63,7 @@ import com.tencent.bkrepo.generic.pojo.TemporaryUrlCreateRequest
 import com.tencent.bkrepo.repository.api.RepositoryClient
 import com.tencent.devops.plugin.api.PluginManager
 import com.tencent.devops.plugin.api.applyExtension
+import org.slf4j.LoggerFactory
 import org.springframework.stereotype.Service
 import org.springframework.web.servlet.mvc.method.annotation.SseEmitter
 import java.time.LocalDateTime
@@ -243,6 +244,7 @@ class TemporaryAccessService(
      */
     private fun generateAccessUrl(tokenInfo: TemporaryTokenInfo, tokenType: TokenType, host: String?): String {
         val urlHost = if (!host.isNullOrBlank()) host else genericProperties.domain
+        logger.info("test...urlHost=$urlHost, host=$host, domain=${genericProperties.domain}")
         val builder = StringBuilder(UrlFormatter.formatHost(urlHost))
         when (tokenType) {
             TokenType.DOWNLOAD -> builder.append(TEMPORARY_DOWNLOAD_ENDPOINT)
@@ -353,5 +355,6 @@ class TemporaryAccessService(
     companion object {
         private const val TEMPORARY_DOWNLOAD_ENDPOINT = "/temporary/download"
         private const val TEMPORARY_UPLOAD_ENDPOINT = "/temporary/upload"
+        private val logger = LoggerFactory.getLogger(TemporaryAccessService::class.java)
     }
 }
