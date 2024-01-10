@@ -7,6 +7,8 @@ ENV BK_REPO_HOME=/data/workspace \
     BK_REPO_SERVICE_PREFIX=bkrepo- \
     BK_REPO_PROFILE=dev
 
+RUN yum install -y nfs-utils
+
 RUN mkdir -p /data/tools && \
     curl -o /data/tools/arthas.jar https://arthas.aliyun.com/arthas-boot.jar
 
