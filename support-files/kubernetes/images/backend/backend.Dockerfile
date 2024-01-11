@@ -18,3 +18,5 @@ RUN ln -snf /usr/share/zoneinfo/Asia/Shanghai /etc/localtime && \
     chmod +x /data/workspace/startup.sh
 WORKDIR /data/workspace
 CMD /data/workspace/startup.sh
+
+RUN yum clean all
