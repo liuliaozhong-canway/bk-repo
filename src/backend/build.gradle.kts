@@ -92,6 +92,13 @@ allprojects {
             dependency("net.minidev:json-smart:2.5.2")
             // spring-cloud-starter-config:4.2.0依赖版本5.4.1有cve漏洞，升级框架后可以移除
             dependency("org.apache.httpcomponents.client5:httpclient5:5.4.4")
+
+            // 临时修复漏洞
+            dependency("org.springframework.security:spring-security-crypto:6.4.5")
+            dependency("org.springframework:spring-web:6.2.9")
+            dependency("commons-fileupload:commons-fileupload:1.6.0")
+            dependency("com.amazon.ion:ion-java:1.10.5")
+
         }
     }
 
